@@ -29,8 +29,8 @@ public class User {
     }
 
     public User(String id, String username, String passwordHash, String role, String location) {
-        this.id = id;
-        this.username = username;
+        this.id = id.replaceAll("[\\r\\n]+", "").trim();
+        this.username = username.replaceAll("[\\r\\n]+", "").trim();
         this.passwordHash = passwordHash;
         this.role = role;
         this.location = location;
