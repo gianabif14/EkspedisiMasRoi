@@ -6,6 +6,9 @@ import com.github.orions29.ekspedisi.model.entity.User;
 import com.github.orions29.ekspedisi.utils.HashUtil;
 import com.github.orions29.ekspedisi.views.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.swing.*;
 
 /**
@@ -20,6 +23,7 @@ import javax.swing.*;
  */
 public class LoginController {
 
+    private Logger logger = LoggerFactory.getLogger(LoginController.class);
     private LoginView view;
     private UserDAO userDAO;
 
@@ -114,6 +118,8 @@ public class LoginController {
 
         String role =
                 user.getRole(); // ngambil role  user
+
+        logger.info("USER LOGGED IN : [{}] - {}", user.getId(), user.getUsername());
 
         switch (role.toLowerCase()) {
 

@@ -2,6 +2,8 @@ package com.github.orions29.ekspedisi.views;
 
 import com.github.orions29.ekspedisi.model.entity.User;
 
+import org.slf4j.Logger;
+
 import javax.swing.*;
 
 /**
@@ -19,7 +21,7 @@ import javax.swing.*;
  * <hr>
  */
 public class KurirViews extends javax.swing.JFrame {
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(KurirViews.class.getName());
+
     private User user;
 
     public KurirViews(User user) {

@@ -243,126 +243,6 @@ public class AdminViews extends javax.swing.JFrame {
         pack();
     }
 
-    private void logToConsole(String message) {
-        String timestamp = java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("HH:mm:ss"));
-        txtConsole.append(String.format("[%s] %s\n", timestamp, message));
-        txtConsole.setCaretPosition(txtConsole.getDocument().getLength());
-    }
-
-    private void clearForm() {
-        txtUserId.setText("");
-        txtUsername.setText("");
-        txtPassword.setText("");
-        txtLokasi.setText("");
-        comboRole.setSelectedIndex(0);
-    }
-
-//    TODO Pindahkan ke Controller
-
-    private void btnLogoutActionPerformed(java.awt.event.ActionEvent evt) {
-        JOptionPane.showMessageDialog(this, "Logout dari Administrator System.");
-        this.dispose();
-    }
-
-    private void btnCariActionPerformed(java.awt.event.ActionEvent evt) {
-        String targetId = txtUserId.getText().trim();
-        if (targetId.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Masukkan ID Pekerja terlebih dahulu.", "Peringatan", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-
-        User user = userDao.getUserById(targetId);
-        if (user != null) {
-            txtUsername.setText(user.getUsername());
-            txtLokasi.setText(user.getLocation() != null ? user.getLocation() : "");
-            comboRole.setSelectedItem(user.getRole().substring(0, 1).toUpperCase() + user.getRole().substring(1).toLowerCase());
-            txtPassword.setText("");
-            logToConsole("DATA DITEMUKAN: " + user.getId() + " | " + user.getUsername());
-        } else {
-            logToConsole("DATA TIDAK DITEMUKAN: ID " + targetId + " fiktif.");
-            JOptionPane.showMessageDialog(this, "Pekerja tidak ditemukan di database.", "Peringatan", JOptionPane.WARNING_MESSAGE);
-        }
-    }
-
-    private void btnSimpanActionPerformed(java.awt.event.ActionEvent evt) {
-        String role = comboRole.getSelectedItem().toString().toLowerCase();
-        String username = txtUsername.getText().trim();
-        String password = new String(txtPassword.getPassword()).trim();
-        String lokasi = txtLokasi.getText().trim();
-
-        if (username.isEmpty() || password.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Username dan Password wajib diisi untuk data baru!", "Peringatan", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-
-        if (lokasi.isEmpty() && !role.equals("kurir")) {
-            JOptionPane.showMessageDialog(this, "Lokasi wajib diisi untuk staf Loket dan Gudang!", "Peringatan", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-
-        String idBaru = GeneratorId.generateUserId(role);
-        String hashPass = HashUtil.hashSHA256(password);
-        String finalLokasi = (lokasi.isEmpty() && role.equals("kurir")) ? null : lokasi;
-
-        User userBaru = new User(idBaru, username, hashPass, role, finalLokasi);
-
-        if (userDao.insertUser(userBaru)) {
-            logToConsole("INSERT SUKSES: " + idBaru + " | " + username);
-            clearForm();
-        } else {
-            logToConsole("INSERT GAGAL: Kemungkinan username sudah dipakai.");
-        }
-    }
-
-    private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {
-        String targetId = txtUserId.getText().trim();
-        if (targetId.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Cari ID Pekerja terlebih dahulu sebelum melakukan update.", "Peringatan", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-
-        String role = comboRole.getSelectedItem().toString().toLowerCase();
-        String username = txtUsername.getText().trim();
-        String password = new String(txtPassword.getPassword()).trim();
-        String lokasi = txtLokasi.getText().trim();
-
-        if (username.isEmpty() || password.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Username dan Password tidak boleh kosong saat update. Silakan ketik ulang password.", "Peringatan", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-
-        String finalLokasi = (lokasi.isEmpty() && role.equals("kurir")) ? null : lokasi;
-        String hashPass = HashUtil.hashSHA256(password);
-
-        User updatedUser = new User(targetId, username, hashPass, role, finalLokasi);
-
-        if (userDao.updateUser(updatedUser)) {
-            logToConsole("UPDATE SUKSES: Data untuk ID " + targetId + " telah diperbarui.");
-            clearForm();
-        } else {
-            logToConsole("UPDATE GAGAL: Terjadi kesalahan pada database.");
-        }
-    }
-
-    private void btnHapusActionPerformed(java.awt.event.ActionEvent evt) {
-        String targetId = txtUserId.getText().trim();
-        if (targetId.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Masukkan ID Pekerja yang ingin dihapus.", "Peringatan", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-
-        int konfirmasi = JOptionPane.showConfirmDialog(this, "Hapus pekerja " + targetId + " secara permanen?", "Konfirmasi Hapus", JOptionPane.YES_NO_OPTION);
-        if (konfirmasi == JOptionPane.YES_OPTION) {
-            if (userDao.deleteUser(targetId)) {
-                logToConsole("DELETE SUKSES: Pekerja " + targetId + " dihapus permanen.");
-                clearForm();
-            } else {
-                logToConsole("DELETE GAGAL: ID tidak ditemukan atau terikat pada data logistik.");
-            }
-        }
-    }
-
-
     public JButton getBtnCari() {
         return btnCari;
     }
@@ -381,6 +261,30 @@ public class AdminViews extends javax.swing.JFrame {
 
     public JButton getBtnUpdate() {
         return btnUpdate;
+    }
+
+    public javax.swing.JTextField getTxtUserId() {
+        return txtUserId;
+    }
+
+    public javax.swing.JTextField getTxtUsername() {
+        return txtUsername;
+    }
+
+    public javax.swing.JPasswordField getTxtPassword() {
+        return txtPassword;
+    }
+
+    public javax.swing.JTextField getTxtLokasi() {
+        return txtLokasi;
+    }
+
+    public javax.swing.JComboBox<String> getComboRole() {
+        return comboRole;
+    }
+
+    public javax.swing.JTextArea getTxtConsole() {
+        return txtConsole;
     }
 
     /**
