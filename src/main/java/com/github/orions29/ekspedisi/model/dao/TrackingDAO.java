@@ -1,5 +1,6 @@
 package com.github.orions29.ekspedisi.model.dao;
 
+import com.github.orions29.ekspedisi.model.entity.PaketDTO;
 import com.github.orions29.ekspedisi.model.entity.ShipmentLog;
 
 import java.util.List;
@@ -52,7 +53,7 @@ public interface TrackingDAO {
     List<ShipmentLog> getShipmentLogByResi(String resiId);
 
     /**
-     *
+     * TODO : Dihapus aja nanti kalau dibawah sudah ok
      * <h3>Mengambil Paket yang Masih dipegang oleh User ID, (Single Filter)</h3>
      * <p> </p>
      *
@@ -63,19 +64,33 @@ public interface TrackingDAO {
      * @since 2 Jun 2026
      *
      */
-    Map<String,String> getResiByLatestStatusAndUser(String targetStatus, String userId);
+    Map<String, String> getResiByLatestStatusAndUser(String targetStatus, String userId);
 
     /**
      *
      * <h3>Mengambil Paket yang Masih Dipegang oleh User ID, (Multiple Filter)</h3>
      * <p> </p>
      *
-     *
+     * @param targetStatuses $END$ - Deskripsi fungsi parameter ini
+     * @param userId         $END$ - Deskripsi fungsi parameter ini
+     * @return {@link List<String>} - Penjelasan mengenai data yang dikembalikan
      * @author Orions29
      * @since 6 Jun 2026
-     * @param targetStatuses $END$ - Deskripsi fungsi parameter ini
-     * @param userId $END$ - Deskripsi fungsi parameter ini
-     * @return {@link List<String>} - Penjelasan mengenai data yang dikembalikan
-     *     */
+     *
+     */
     List<String> getResiByMultipleLatestStatuses(List<String> targetStatuses, String userId);
+
+    /**
+     *
+     * <h3>Mengambil Paket yang Masih Dipegang oleh User ID, (Single Filter)</h3>
+     * <p> </p>
+     *
+     * @param targetStatus - Target Status yang ingin dicari
+     * @param userId       - paket yang masih dipegang oleh user siapa
+     * @return {@link List<PaketDTO>} - Dikembalikan dalam bentuk List Paket DTO
+     * @author Orions29
+     * @since 6 Jun 2026
+     *
+     */
+    List<PaketDTO> getAllPaketByStatus(String targetStatus, String userId);
 }

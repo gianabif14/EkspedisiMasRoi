@@ -2,13 +2,13 @@ package com.github.orions29.ekspedisi.controller;
 
 import com.github.orions29.ekspedisi.model.dao.TrackingDAO;
 import com.github.orions29.ekspedisi.model.dao.TrackingDAOMariaDb;
+import com.github.orions29.ekspedisi.model.entity.PaketDTO;
 import com.github.orions29.ekspedisi.model.entity.ShipmentLog;
 import com.github.orions29.ekspedisi.model.entity.User;
 import com.github.orions29.ekspedisi.views.KurirViews;
 import com.github.orions29.ekspedisi.views.LoginView;
 
 import java.util.List;
-import java.util.Map;
 
 import javax.swing.*;
 
@@ -234,7 +234,8 @@ public class KurirController {
      *
      */
     private void handleCekMuatan() {
-        Map<String,String> daftarResi = trackingDAO.getResiByLatestStatusAndUser("Dibawa Kurir", loggedInUser.getId());
+        List<PaketDTO> daftarResi = trackingDAO.getAllPaketByStatus("Dibawa Kurir", loggedInUser.getId());
+//        Map<String,String> daftarResi = trackingDAO.getResiByLatestStatusAndUser("Dibawa Kurir", loggedInUser.getId());
         view.getListPaketAreaButton().setText("");
 
 //        Error handling kalau kosong
@@ -245,11 +246,12 @@ public class KurirController {
 
         StringBuilder daftarPaketTxt = new StringBuilder();
         daftarPaketTxt.append("<= DAFTAR MUATAN =>\n");
-        daftarPaketTxt.append("Total Paket: ").append(daftarResi.size()).append(" item\n\n");
+        daftarPaketTxt.append("Total Paket: ").append(daftarResi.size()).append(" item\n");
+        daftarPaketTxt.append("Format RESI-Kode-Resi - [Kota Tujuan]\n\n");
 
         int nomor = 1;
-        for (String resi : daftarResi.keySet()) {
-            daftarPaketTxt.append(nomor).append(". ").append(resi).append("\n");
+        for (PaketDTO paket : daftarResi) {
+            daftarPaketTxt.append(nomor).append(". ").append(paket.resi()).append(" - [").append(paket.tujuan()).append("]\n");
             nomor++;
         }
 

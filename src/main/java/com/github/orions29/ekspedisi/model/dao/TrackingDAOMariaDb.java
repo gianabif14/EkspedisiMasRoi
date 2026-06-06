@@ -1,6 +1,7 @@
 package com.github.orions29.ekspedisi.model.dao;
 
 import com.github.orions29.ekspedisi.model.DatabaseConfig;
+import com.github.orions29.ekspedisi.model.entity.PaketDTO;
 import com.github.orions29.ekspedisi.model.entity.ShipmentLog;
 
 import org.slf4j.Logger;
@@ -170,10 +171,47 @@ public class TrackingDAOMariaDb implements TrackingDAO {
             }
 
         } catch (SQLException e) {
-            System.err.println("[QUERRY ERROR] Error: Gudang");
+            System.err.println("[QUERRY ERROR] Error: Gagal Menarik Data Resi");
             logger.error("[QUERRY ERROR] - Error: " + e.getMessage());
         }
 
         return listResi;
+    }
+
+    @Override
+    public List<PaketDTO> getAllPaketByStatus(String targetStatus, String userId) {
+        List<PaketDTO> daftarPaket = new ArrayList<>();
+
+        String sql = "SELECT t1.resi_id, t1.status, p.receiver_name, p.destination_city " +
+                "FROM tracking_logs t1 " +
+                "INNER JOIN (" +
+                "    SELECT resi_id, MAX(log_id) as max_id " +
+                "    FROM tracking_logs GROUP BY resi_id" +
+                ") t2 ON t1.log_id = t2.max_id " +
+                "INNER JOIN paket p ON t1.resi_id = p.resi_id " +
+                "WHERE t1.status = ? AND t1.user_id = ?";
+
+        try (Connection conn = DatabaseConfig.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, targetStatus);
+            pstmt.setString(2, userId);
+
+            try (java.sql.ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    PaketDTO paket = new PaketDTO(
+                            rs.getString("resi_id"),
+                            rs.getString("status"),
+                            rs.getString("receiver_name"),
+                            rs.getString("destination_city")
+                    );
+                    daftarPaket.add(paket);
+                }
+            }
+        } catch (java.sql.SQLException e) {
+            System.err.println("[QUERRY ERROR] Error: Gagal Menarik Data Resi All");
+            logger.error("[QUERY ERROR] - Gagal menarik data paket: {}", e.getMessage());
+        }
+        return daftarPaket;
     }
 }
