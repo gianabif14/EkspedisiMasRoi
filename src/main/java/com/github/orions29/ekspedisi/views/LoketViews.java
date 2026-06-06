@@ -419,8 +419,7 @@ public class LoketViews extends javax.swing.JFrame {
         return jLabel17;
     }
 
-
-    public javax.swing.JTextArea getTxtPaketLoket() {
+    public javax.swing.JTextArea getTxtListPaketLoket() {
         return txtPaketListLoket;
     }
 

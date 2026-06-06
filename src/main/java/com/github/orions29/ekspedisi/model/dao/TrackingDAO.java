@@ -3,6 +3,7 @@ package com.github.orions29.ekspedisi.model.dao;
 import com.github.orions29.ekspedisi.model.entity.ShipmentLog;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Project: EkspedisiMasRoi
@@ -52,7 +53,7 @@ public interface TrackingDAO {
 
     /**
      *
-     * <h3>Mengambil Paket yang Masih Dipegang Kurir Tertentu</h3>
+     * <h3>Mengambil Paket yang Masih dipegang oleh User ID, (Single Filter)</h3>
      * <p> </p>
      *
      * @param targetStatus - Status yang ingin dicari
@@ -62,7 +63,19 @@ public interface TrackingDAO {
      * @since 2 Jun 2026
      *
      */
-    List<String> getResiByLatestStatusAndUser(String targetStatus, String userId);
+    Map<String,String> getResiByLatestStatusAndUser(String targetStatus, String userId);
 
+    /**
+     *
+     * <h3>Mengambil Paket yang Masih Dipegang oleh User ID, (Multiple Filter)</h3>
+     * <p> </p>
+     *
+     *
+     * @author Orions29
+     * @since 6 Jun 2026
+     * @param targetStatuses $END$ - Deskripsi fungsi parameter ini
+     * @param userId $END$ - Deskripsi fungsi parameter ini
+     * @return {@link List<String>} - Penjelasan mengenai data yang dikembalikan
+     *     */
     List<String> getResiByMultipleLatestStatuses(List<String> targetStatuses, String userId);
 }

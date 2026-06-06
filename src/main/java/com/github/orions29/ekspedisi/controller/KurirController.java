@@ -8,6 +8,7 @@ import com.github.orions29.ekspedisi.views.KurirViews;
 import com.github.orions29.ekspedisi.views.LoginView;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.*;
 
@@ -233,12 +234,12 @@ public class KurirController {
      *
      */
     private void handleCekMuatan() {
-        List<String> daftarResi = trackingDAO.getResiByLatestStatusAndUser("Dibawa Kurir", loggedInUser.getId());
+        Map<String,String> daftarResi = trackingDAO.getResiByLatestStatusAndUser("Dibawa Kurir", loggedInUser.getId());
         view.getListPaketAreaButton().setText("");
 
 //        Error handling kalau kosong
         if (daftarResi.isEmpty()) {
-            view.getListPaketAreaButton().setText("[KOSONG]\n\nTidak ada paket yang sedang kamu bawa saat ini.\nSantai dulu ngab! â˜•");
+            view.getListPaketAreaButton().setText("[KOSONG]\n\nTidak ada paket yang sedang kamu bawa saat ini.\nSantai dulu ngab!");
             return;
         }
 
@@ -247,7 +248,7 @@ public class KurirController {
         daftarPaketTxt.append("Total Paket: ").append(daftarResi.size()).append(" item\n\n");
 
         int nomor = 1;
-        for (String resi : daftarResi) {
+        for (String resi : daftarResi.keySet()) {
             daftarPaketTxt.append(nomor).append(". ").append(resi).append("\n");
             nomor++;
         }

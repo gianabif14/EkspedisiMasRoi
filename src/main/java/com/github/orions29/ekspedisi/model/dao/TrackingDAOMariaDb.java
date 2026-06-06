@@ -10,9 +10,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * Project: EkspedisiMasRoi
@@ -101,10 +99,10 @@ public class TrackingDAOMariaDb implements TrackingDAO {
     }
 
     @Override
-    public List<String> getResiByLatestStatusAndUser(String targetStatus, String userId) {
-        List<String> listResi = new ArrayList<>();
+    public Map<String, String> getResiByLatestStatusAndUser(String targetStatus, String userId) {
+        Map<String, String> mapResi = new HashMap<>();
 
-        String querySql = "SELECT t1.resi_id " +
+        String querySql = "SELECT t1.resi_id, t1.status " +
                 "FROM tracking_logs t1 " +
                 "INNER JOIN (" +
                 "    SELECT resi_id, MAX(log_id) as max_id " +
@@ -121,7 +119,7 @@ public class TrackingDAOMariaDb implements TrackingDAO {
 
             try (java.sql.ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
-                    listResi.add(rs.getString("resi_id"));
+                    mapResi.put(rs.getString("resi_id"), rs.getString("status"));
                 }
             }
 
@@ -130,7 +128,7 @@ public class TrackingDAOMariaDb implements TrackingDAO {
             e.printStackTrace();
         }
 
-        return listResi;
+        return mapResi;
     }
 
     @Override
@@ -144,13 +142,13 @@ public class TrackingDAOMariaDb implements TrackingDAO {
         String placeholders = String.join(",", Collections.nCopies(targetStatuses.size(), "?"));
 
         String sql = "SELECT t1.resi_id , t1.status " +
-                     "FROM tracking_logs t1 " +
-                     "INNER JOIN (" +
-                     "    SELECT resi_id, MAX(log_id) as max_id " +
-                     "    FROM tracking_logs " +
-                     "    GROUP BY resi_id" +
-                     ") t2 ON t1.log_id = t2.max_id " +
-                     "WHERE t1.status IN (" + placeholders + ") AND t1.user_id = ?";
+                "FROM tracking_logs t1 " +
+                "INNER JOIN (" +
+                "    SELECT resi_id, MAX(log_id) as max_id " +
+                "    FROM tracking_logs " +
+                "    GROUP BY resi_id" +
+                ") t2 ON t1.log_id = t2.max_id " +
+                "WHERE t1.status IN (" + placeholders + ") AND t1.user_id = ?";
 
         try (Connection conn = DatabaseConfig.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -173,7 +171,7 @@ public class TrackingDAOMariaDb implements TrackingDAO {
 
         } catch (SQLException e) {
             System.err.println("[QUERRY ERROR] Error: Gudang");
-            logger.error("[QUERRY ERROR] - Error: "+e.getMessage());
+            logger.error("[QUERRY ERROR] - Error: " + e.getMessage());
         }
 
         return listResi;
