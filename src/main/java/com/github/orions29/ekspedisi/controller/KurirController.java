@@ -105,10 +105,10 @@ public class KurirController {
     }
 
     private void handleCameraScan() {
-        com.github.orions29.ekspedisi.views.CameraScannerDialog dialog = 
+        com.github.orions29.ekspedisi.views.CameraScannerDialog dialog =
             new com.github.orions29.ekspedisi.views.CameraScannerDialog(view);
         dialog.setVisible(true);
-        
+
         String scannedResi = dialog.getScannedResult();
         if (scannedResi != null && !scannedResi.trim().isEmpty()) {
             view.getTxtResi().setText(scannedResi);
@@ -251,7 +251,7 @@ public class KurirController {
 
         int nomor = 1;
         for (PaketDTO paket : daftarResi) {
-            daftarPaketTxt.append(nomor).append(". ").append(paket.resi()).append(" - [").append(paket.tujuan()).append("]\n");
+            daftarPaketTxt.append(nomor).append(". ").append(paket.resi()).append(" - [").append(paket.kotaTujuan()).append("]\n");
             nomor++;
         }
 

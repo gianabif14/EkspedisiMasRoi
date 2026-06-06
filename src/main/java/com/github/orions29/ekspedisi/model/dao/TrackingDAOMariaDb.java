@@ -100,82 +100,54 @@ public class TrackingDAOMariaDb implements TrackingDAO {
     }
 
     @Override
-    public Map<String, String> getResiByLatestStatusAndUser(String targetStatus, String userId) {
-        Map<String, String> mapResi = new HashMap<>();
+    public List<PaketDTO> getResiByMultipleLatestStatuses(List<String> targetStatuses, String userId) {
+        List<PaketDTO> daftarResi = new ArrayList<>();
 
-        String querySql = "SELECT t1.resi_id, t1.status " +
-                "FROM tracking_logs t1 " +
-                "INNER JOIN (" +
-                "    SELECT resi_id, MAX(log_id) as max_id " +
-                "    FROM tracking_logs " +
-                "    GROUP BY resi_id" +
-                ") t2 ON t1.log_id = t2.max_id " +
-                "WHERE t1.status = ? AND t1.user_id = ?";
-
-        try (Connection conn = DatabaseConfig.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(querySql)) {
-
-            pstmt.setString(1, targetStatus);
-            pstmt.setString(2, userId);
-
-            try (java.sql.ResultSet rs = pstmt.executeQuery()) {
-                while (rs.next()) {
-                    mapResi.put(rs.getString("resi_id"), rs.getString("status"));
-                }
-            }
-
-        } catch (java.sql.SQLException e) {
-            System.err.println("[QUERY ERROR] -  Error saat Menarik Paket Kurir");
-            e.printStackTrace();
-        }
-
-        return mapResi;
-    }
-
-    @Override
-    public List<String> getResiByMultipleLatestStatuses(List<String> targetStatuses, String userId) {
-        List<String> listResi = new ArrayList<>();
 
         if (targetStatuses == null || targetStatuses.isEmpty()) {
-            return listResi;
+            return daftarResi;
         }
 
         String placeholders = String.join(",", Collections.nCopies(targetStatuses.size(), "?"));
 
-        String sql = "SELECT t1.resi_id , t1.status " +
+        String sql = "SELECT t1.resi_id, t1.status, p.receiver_name, p.destination_city " +
                 "FROM tracking_logs t1 " +
                 "INNER JOIN (" +
                 "    SELECT resi_id, MAX(log_id) as max_id " +
                 "    FROM tracking_logs " +
                 "    GROUP BY resi_id" +
                 ") t2 ON t1.log_id = t2.max_id " +
+                "INNER JOIN paket p ON t1.resi_id = p.resi_id " +
                 "WHERE t1.status IN (" + placeholders + ") AND t1.user_id = ?";
 
         try (Connection conn = DatabaseConfig.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            // Looping dinamis untuk mengisi semua tanda tanya (?) dengan nama status
             int index = 1;
             for (String status : targetStatuses) {
                 pstmt.setString(index++, status);
             }
 
-            // Kunci pengaman terakhir: ID Pekerja
             pstmt.setString(index, userId);
 
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
-                    String dataMentah = String.format("%s - [%s]", rs.getString("resi_id"), rs.getString("status"));
-                    listResi.add(dataMentah);
+                    PaketDTO paket = new PaketDTO(
+                            rs.getString("resi_id"),
+                            rs.getString("status"),
+                            rs.getString("receiver_name"),
+                            rs.getString("destination_city")
+                    );
+                    daftarResi.add(paket);
                 }
             }
 
         } catch (SQLException e) {
-            System.err.println("[QUERRY ERROR] Error: Gagal Menarik Data Resi");
-            logger.error("[QUERRY ERROR] - Error: " + e.getMessage());
+            System.err.println("[QUERY ERROR] Fatal: Gagal Menarik Data Resi All (Multiple Status)");
+            logger.error("[QUERY ERROR] - Error: " + e.getMessage());
         }
 
-        return listResi;
+        return daftarResi;
     }
 
     @Override
@@ -214,4 +186,6 @@ public class TrackingDAOMariaDb implements TrackingDAO {
         }
         return daftarPaket;
     }
+
+
 }

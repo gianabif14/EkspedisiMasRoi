@@ -4,7 +4,6 @@ import com.github.orions29.ekspedisi.model.entity.PaketDTO;
 import com.github.orions29.ekspedisi.model.entity.ShipmentLog;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * Project: EkspedisiMasRoi
@@ -53,20 +52,6 @@ public interface TrackingDAO {
     List<ShipmentLog> getShipmentLogByResi(String resiId);
 
     /**
-     * TODO : Dihapus aja nanti kalau dibawah sudah ok
-     * <h3>Mengambil Paket yang Masih dipegang oleh User ID, (Single Filter)</h3>
-     * <p> </p>
-     *
-     * @param targetStatus - Status yang ingin dicari
-     * @param userId       - UserID Kurir
-     * @return {@link List<String>} - List Paket yang masih di pegang Kurir
-     * @author Orions29
-     * @since 2 Jun 2026
-     *
-     */
-    Map<String, String> getResiByLatestStatusAndUser(String targetStatus, String userId);
-
-    /**
      *
      * <h3>Mengambil Paket yang Masih Dipegang oleh User ID, (Multiple Filter)</h3>
      * <p> </p>
@@ -78,7 +63,7 @@ public interface TrackingDAO {
      * @since 6 Jun 2026
      *
      */
-    List<String> getResiByMultipleLatestStatuses(List<String> targetStatuses, String userId);
+    List<PaketDTO> getResiByMultipleLatestStatuses(List<String> targetStatuses, String userId);
 
     /**
      *

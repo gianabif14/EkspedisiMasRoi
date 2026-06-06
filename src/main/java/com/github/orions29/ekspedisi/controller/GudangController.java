@@ -2,6 +2,7 @@ package com.github.orions29.ekspedisi.controller;
 
 import com.github.orions29.ekspedisi.model.dao.TrackingDAO;
 import com.github.orions29.ekspedisi.model.dao.TrackingDAOMariaDb;
+import com.github.orions29.ekspedisi.model.entity.PaketDTO;
 import com.github.orions29.ekspedisi.model.entity.ShipmentLog;
 import com.github.orions29.ekspedisi.model.entity.User;
 import com.github.orions29.ekspedisi.views.GudangViews;
@@ -157,7 +158,7 @@ public class GudangController {
         );
 
 //        Ngambil daftar resi yang statusnya ada di list statusGudang di or kan
-        List<String> daftarResi = trackingDAO.getResiByMultipleLatestStatuses(statusGudang, loggedInUser.getId());
+        List<PaketDTO> daftarResi = trackingDAO.getResiByMultipleLatestStatuses(statusGudang, loggedInUser.getId());
 
         StringBuilder sb = new StringBuilder();
         sb.append("<== DAFTAR PAKET ==>\n");
@@ -168,8 +169,13 @@ public class GudangController {
             sb.append("[KOSONG]\nKerjaan beres Ngab");
         } else {
             int nomor = 1;
-            for (String resi : daftarResi) {
-                sb.append(nomor).append(". ").append(resi).append("\n");
+            for (PaketDTO resi : daftarResi) {
+                sb.append(nomor)
+                    .append(". ")
+                    .append(resi.resi())
+                    .append(" - ")
+                    .append(resi.status())
+                    .append(" - [").append(resi.kotaTujuan()).append("]\n");
                 nomor++;
             }
         }

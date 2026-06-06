@@ -5,6 +5,7 @@ import com.github.orions29.ekspedisi.model.dao.PaketDAOMariaDb;
 import com.github.orions29.ekspedisi.model.dao.TrackingDAO;
 import com.github.orions29.ekspedisi.model.dao.TrackingDAOMariaDb;
 import com.github.orions29.ekspedisi.model.entity.Paket;
+import com.github.orions29.ekspedisi.model.entity.PaketDTO;
 import com.github.orions29.ekspedisi.model.entity.ShipmentLog;
 import com.github.orions29.ekspedisi.model.entity.User;
 import com.github.orions29.ekspedisi.utils.GeneratorId;
@@ -12,7 +13,6 @@ import com.github.orions29.ekspedisi.utils.PricingUtil;
 import com.github.orions29.ekspedisi.views.LoketViews;
 
 import java.util.List;
-import java.util.Map;
 
 import javax.swing.*;
 
@@ -302,7 +302,8 @@ public class LoketController {
      *
      */
     private void handleCheckPaket() {
-        Map<String, String> daftarResi = trackingDAO.getResiByLatestStatusAndUser("Diterima di Loket", loggedInUser.getId());
+
+        List<PaketDTO> daftarResi = trackingDAO.getAllPaketByStatus("Diterima di Loket", loggedInUser.getId());
         view.getTxtListPaketLoket().setText("");
 
 //        Error handling kalau kosong
@@ -313,11 +314,17 @@ public class LoketController {
 
         StringBuilder daftarPaketTxt = new StringBuilder();
         daftarPaketTxt.append("<= Daftar Paket Yang Masih Di Loket ini =>\n");
-        daftarPaketTxt.append("Total Paket: ").append(daftarResi.size()).append(" item\n\n");
+        daftarPaketTxt.append("Total Paket: ").append(daftarResi.size()).append(" item\n");
+        daftarPaketTxt.append("Format RESI-Kode-Resi - Status - [Kota Tujuan]\n\n");
 
         int nomor = 1;
-        for (Map.Entry<String, String> listPaket : daftarResi.entrySet()) {
-            daftarPaketTxt.append(nomor).append(". ").append(listPaket.getKey()).append(" - [").append(listPaket.getValue()).append("]\n");
+        for (PaketDTO paket : daftarResi) {
+            daftarPaketTxt.append(nomor)
+                    .append(". ")
+                    .append(paket.resi())
+                    .append(" - ")
+                    .append(paket.status())
+                    .append(" - [").append(paket.kotaTujuan()).append("]\n");
             nomor++;
         }
 

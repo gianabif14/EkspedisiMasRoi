@@ -18,5 +18,5 @@ package com.github.orions29.ekspedisi.model.entity;
  * @author Orions29
  * @since 1.0
  */
-public record PaketDTO(String resi, String status, String namaPenerima, String tujuan) {
+public record PaketDTO(String resi, String status, String senderName, String kotaTujuan) {
 }
