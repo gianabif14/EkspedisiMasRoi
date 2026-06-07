@@ -324,7 +324,7 @@ public class LoketController {
                     .append(paket.resi())
                     .append(" - ")
                     .append(paket.status())
-                    .append(" - [").append(paket.kotaTujuan()).append("]\n");
+                    .append(" - [").append(paket.destinationCity()).append("]\n");
             nomor++;
         }
 

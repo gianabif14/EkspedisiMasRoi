@@ -18,11 +18,9 @@ import javax.swing.*;
  * </p>
  *
  * <hr>
- * <table border="0">
- * <tr><td><b>Author</b></td><td>: Orions29</td></tr>
- * <tr><td><b>Date</b></td><td>: 15 May 2026</td></tr>
- * <tr><td><b>Time</b></td><td>: 22:05</td></tr>
- * </table>
+ * <b>Author</b>: Orions29
+ * <b>Date</b>: 15 May 2026
+ * <b>Time</b>: 22:05
  * <hr>
  *
  * @author Orions29
