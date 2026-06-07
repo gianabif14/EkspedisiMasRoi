@@ -1,11 +1,56 @@
 @startuml
-'https://plantuml.com/class-diagram
+package "ekspedisi.views" <<folder>> {
 
-package "views" <<folder>>{
-    class "form"{
-    - belum ada
+    class LoginView <<JPanel>> {
+        - usernameInput : JTextField
+        - passwordInput : JPasswordField
+        - systemTime : JLabel
+        + getLoginButton() : JButton
+    }
+
+    class AdminViews <<JFrame>> {
+        - txtConsole : JTextArea
+        - panelForm : JPanel
+        + getTxtUserId() : JTextField
+    }
+
+    class LoketViews <<JFrame>> {
+        - tabbedPane : JTabbedPane
+        - txtPaketListLoket : JTextArea
+        + getCheckPaketButton() : JButton
+    }
+
+    class GudangViews <<JFrame>> {
+        - txtConsole : JTextArea
+        - txtResi : JTextField
+        - comboStatus : JComboBox
+        + getBtnCamera() : JButton
+    }
+
+    class KurirViews <<JFrame>> {
+        - listPaketArea : JTextArea
+        - txtResi : JTextField
+        + getBtnCamera() : JButton
+    }
+
+    class TrackingViews <<JFrame>> {
+        - txtRiwayat : JTextArea
+        - txtResi : JTextField
+        + <<StandAlone Controller>>
+    }
+
+    class CameraScannerDialog <<JDialog>> {
+        - webcamPanel : WebcamPanel
+        - scannerThread : Thread
+        - scannedResult : String
+        + getScannedResult() : String
     }
 }
+
+' Relasi Penggunaan Kamera
+GudangViews ..> CameraScannerDialog : <<spawns>>
+KurirViews ..> CameraScannerDialog : <<spawns>>
+TrackingViews ..> CameraScannerDialog : <<spawns>>
 
 'Legenda
 legend bottom center
@@ -15,6 +60,5 @@ legend bottom center
       <color:orange>🔶</color>  <b> # </b>  Protected
       <color:green>🟢</color>  <b> + </b>  Public
 endlegend
-
 
 @enduml

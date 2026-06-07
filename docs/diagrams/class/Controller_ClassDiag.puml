@@ -1,85 +1,61 @@
 @startuml
-
 package "ekspedisi" <<Folder>> {
     package "controller" <<Folder>>  {
         class LoginController {
-            - static final Logger log
+            - log : Logger
             - view : LoginView
             - userDAO : UserDAO
             + initController() : void
-            - handleLoginEvent() : void
-            - routeByRole(role : String) : void
+            - routeByRole(user : User) : void
+        }
+
+        class AdminController {
+            - log : Logger
+            - view : AdminViews
+            - loggedInAdmin : User
+            - userDAO : UserDAO
+            + initController() : void
         }
 
         class LoketController {
-            - static final Logger log
-            - view : InputPaketView
-            - packageDAO : PaketDAO
+            - view : LoketViews
+            - loggedInUser : User
+            - paketDAO : PaketDAO
+            - trackingDAO : TrackingDAO
             + initController() : void
-            - handleSavePaketEvent() : void
-            - calculateShippingCost() : double
+            - handleInputPaket() : void
+            - handleCheckPaket() : void
         }
 
         class GudangController {
-            - static final Logger log
-            - view : GudangDashboardView
+            - view : GudangViews
             - trackingDAO : TrackingDAO
+            - loggedInUser : User
+            - STATE_HIERARCHY : Map<String, Integer>
             + initController() : void
-            - handleManifestCreation() : void
-            - handleMassTransitUpdate() : void
+            + handleMassTransitUpdate() : void
+            + handleCekPaket() : void
         }
 
         class KurirController {
-            - static final Logger log
-            - view : KurirAppView
+            - view : KurirViews
+            - loggedInUser : User
             - trackingDAO : TrackingDAO
+            - ALLOWED_PICKUP_STATUSES : Set<String>
             + initController() : void
-            - handleDeliveryUpdate(resiId: String, status: String) : void
+            - handleDeliveryUpdate() : void
+            - handleTakeToGudang() : void
+            - handlePaketSelesai() : void
         }
-
-        class ClientController {
-            - static final Logger log
-            - view : TrackingResultView
-            - trackingDAO : TrackingDAO
-            + initController() : void
-            - handleSearchResi() : void
-        }
-    }
-
-    package "model.dao" <<Folder>> {
-        class UserDAO
-        class PaketDAO
-        class TrackingDAO
-    }
-
-    package "view" <<Folder>> {
-        class LoginView
-        class InputPaketView
-        class GudangDashboardView
-        class KurirAppView
-        class TrackingResultView
     }
 }
 
-' Relasi Login (Sang Gerbang Utama)
-LoginController --> LoginView : <<updates>>
-LoginController --> UserDAO : <<executes>>
-
-' Relasi Loket
-LoketController --> InputPaketView : <<updates>>
-LoketController --> PaketDAO : <<executes>>
-
-' Relasi Gudang
-GudangController --> GudangDashboardView : <<updates>>
-GudangController --> TrackingDAO : <<executes>>
-
-' Relasi Kurir
-KurirController --> KurirAppView : <<updates>>
-KurirController --> TrackingDAO : <<executes>>
-
-' Relasi Client (Read-Only)
-ClientController --> TrackingResultView : <<updates>>
-ClientController --> TrackingDAO : <<read-only>>
+LoginController --> "uses" UserDAO
+AdminController --> "uses" UserDAO
+LoketController --> "uses" PaketDAO
+LoketController --> "uses" TrackingDAO
+GudangController --> "uses" TrackingDAO
+KurirController --> "uses" TrackingDAO
 
 'Legenda
 legend bottom center

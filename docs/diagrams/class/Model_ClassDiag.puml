@@ -1,10 +1,11 @@
 @startuml
-
 package "ekspedisi.model" <<Folder>> {
 
-    class DatabaseConfig {
-        + getConnection() : Connection
-        note : Load dari application.yml & .env\nKoneksi murni MariaDB Port 3306
+    class DatabaseConfig <<Singleton>> {
+        - static conn : Connection
+        + static getConnection() : Connection
+        + static isConnected() : boolean
+        + static forceCloseConn() : void
     }
 
     package "entity" <<Folder>> {
@@ -14,9 +15,6 @@ package "ekspedisi.model" <<Folder>> {
             - passwordHash : String
             - role : String
             - location : String
-            + getId() : String
-            + getRole() : String
-            + getLocation() : String
         }
 
         class Paket {
@@ -30,6 +28,8 @@ package "ekspedisi.model" <<Folder>> {
             - volume : double
             - typePaket : String
             - createdAt : LocalDateTime
+            + calculateVolumetricWeight() : double
+            + getChargeableWeight() : double
         }
 
         class ShipmentLog {
@@ -40,61 +40,55 @@ package "ekspedisi.model" <<Folder>> {
             - timestamp : LocalDateTime
             - userId : String
         }
+
+        class PaketDTO <<record>> {
+            + resi : String
+            + status : String
+            + senderName : String
+            + destinationCity : String
+        }
     }
 
     package "dao" <<Folder>> {
-
         interface UserDAO <<Interface>> {
-            + authenticate(username : String, pass : String) : User
-            + getUserById(id : String) : User
-            + insertUser(user : User) : boolean
-            + updateUser(user : User) : boolean
-            + deleteUser(userId : String) : boolean
+            + authenticate(username: String, pass: String): User
+            + getUserById(id: String): User
+            + insertUser(user: User): boolean
+            + updateUser(user: User): boolean
+            + deleteUser(userId: String): boolean
         }
 
         interface PaketDAO <<Interface>> {
-            + insertPaket(paket : Paket) : boolean
-            + getPaketByResi(resiId : String) : Paket
+            + insertPaket(paket: Paket): boolean
+            + getPaketByResi(resiId: String): Paket
         }
 
         interface TrackingDAO <<Interface>> {
-            + insertLog(log : ShipmentLog) : boolean
-            + getShipmentLogByResi(resiId : String) : List<ShipmentLog>
+            + insertLog(log: ShipmentLog): boolean
+            + getShipmentLogByResi(resiId: String): List<ShipmentLog>
+            + getResiByMultipleLatestStatuses(targets: List<String>, userId: String): List<PaketDTO>
+            + getAllPaketByStatus(target: String, userId: String): List<PaketDTO>
+            + getLatestPaketStatusByResi(resiId: String): String
         }
 
-        ' --- IMPLEMENTASI MARIA DB ---
-        class UserDAOMariaDb {
-            - logger : Logger
-        }
-
-        class PaketDAOMariaDb {
-            - logger : Logger
-        }
-
-        class TrackingDAOMariaDb {
-            - logger : Logger
-        }
+        class UserDAOMariaDb
+        class PaketDAOMariaDb
+        class TrackingDAOMariaDb
     }
 }
 
-' Relasi Implementasi (Realization)
 UserDAO <|.. UserDAOMariaDb
 PaketDAO <|.. PaketDAOMariaDb
 TrackingDAO <|.. TrackingDAOMariaDb
 
-' Relasi Database Config ke Implementasi DAO (Dependency)
 DatabaseConfig <.. UserDAOMariaDb : <<uses>>
 DatabaseConfig <.. PaketDAOMariaDb : <<uses>>
 DatabaseConfig <.. TrackingDAOMariaDb : <<uses>>
 
-' Relasi Interface DAO ke Entity (Dependency)
 PaketDAO ..> Paket : <<manage>>
 TrackingDAO ..> ShipmentLog : <<manage>>
+TrackingDAO ..> PaketDTO : <<returns>>
 UserDAO ..> User : <<manage>>
-
-' Relasi antar Entity / Table
-Paket "1" *-- "0..*" ShipmentLog : memiliki riwayat log >
-User "1" -- "0..*" ShipmentLog : mencatat >
 
 'Legenda
 legend bottom center
@@ -104,5 +98,4 @@ legend bottom center
       <color:orange>🔶</color>  <b> # </b>  Protected
       <color:green>🟢</color>  <b> + </b>  Public
 endlegend
-
 @enduml
