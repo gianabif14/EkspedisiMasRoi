@@ -11,7 +11,7 @@ import javax.swing.*;
 
 
 /**
- * Project: Ekspedisi Mas Giannt
+ * Project: Ekspedisi Mas Roi
  * Package: com.github.orions29.eskpedisi
  * <p>
  * Deskripsi fungsional dari file ini.

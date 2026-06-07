@@ -41,10 +41,12 @@ public class GudangController {
     private TrackingDAO trackingDAO;
     private User loggedInUser;
 
+//    Pembobotan status paket
     private final Map<String, Integer> STATE_HIERARCHY = Map.of(
             "Tiba di Fasilitas Sortir", 1,
             "Sedang Disortir", 2,
-            "Transit Gudang", 3
+            "Transit Gudang", 3,
+            "Dibawa Kurir", 4
 //            "Diserahkan ke Kurir", 4
     );
 

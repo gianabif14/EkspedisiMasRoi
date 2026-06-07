@@ -68,9 +68,12 @@ public class KurirController {
 
         view.getSubmitPaket()
                 .addActionListener(e -> {
-
                     handleDeliveryUpdate();
                 });
+
+        view.getSendToGudangButton().addActionListener(e -> {
+            handleTakeToGudang();
+        });
 
         view.getPaketSelesaiButton()
                 .addActionListener(e -> {
@@ -172,6 +175,56 @@ public class KurirController {
             handleCekMuatan();
         } else {
             JOptionPane.showMessageDialog(null, "Fatal Error: Gagal update tracking paket ke MariaDB!");
+        }
+    }
+
+    /**
+     *
+     * <h3>Handle Take To Gudang</h3>
+     * <p> Paket yang sudah sampai di gudang akan diberikan ke state ini yang selanjutnya akan diproses gudang</p>
+     *
+     * @author Orions29
+     * @since 7 Jun 2026
+     *
+     */
+    private void handleTakeToGudang() {
+
+        String resi = view.getTxtResi().getText().trim();
+
+        if (resi.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Nomor resi wajib diisi ngab!!");
+            return;
+        }
+
+        String currentStatus = trackingDAO.getLatestPaketStatusByResi(resi);
+
+        // Kurir cuma bisa memulangkan paket yang ada di dalam tasnya
+        if (!"Dibawa Kurir".equals(currentStatus)) {
+            JOptionPane.showMessageDialog(null,
+                    "SOP DILANGGAR! Kamu tidak bisa menyerahkan paket ini ke Gudang karena statusnya [" + currentStatus + "].\n" +
+                            "Kamu HANYA bisa mengembalikan paket yang berstatus 'Dibawa Kurir'!",
+                    "Akses Ditolak", JOptionPane.ERROR_MESSAGE);
+            view.getTxtResi().selectAll();
+            return;
+        }
+
+        // Lempar statusnya kembali menjadi "Transit Gudang"
+        ShipmentLog logBaru = new ShipmentLog(
+                resi,
+                loggedInUser.getLocation(),
+                "Transit Gudang",
+                loggedInUser.getId()
+        );
+
+        boolean success = trackingDAO.insertLog(logBaru);
+
+        if (success) {
+            JOptionPane.showMessageDialog(null, "Serah terima sukses, Muatan resmi diserahkan ke otoritas Gudang.");
+            view.getTxtResi().setText("");
+
+            handleCekMuatan();
+        } else {
+            JOptionPane.showMessageDialog(null, "Fatal Error: MariaDB menolak eksekusi!");
         }
     }
 

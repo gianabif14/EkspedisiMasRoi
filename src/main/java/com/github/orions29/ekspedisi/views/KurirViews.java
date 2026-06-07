@@ -53,6 +53,7 @@ public class KurirViews extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         txtResi = new javax.swing.JTextField();
         submitPaket = new javax.swing.JButton();
+        sendToGudangButton = new javax.swing.JButton();
         paketSelesaiButton = new javax.swing.JButton();
 
         cekPaketButton = new javax.swing.JButton();
@@ -90,6 +91,10 @@ public class KurirViews extends javax.swing.JFrame {
 
         submitPaket.setFont(new java.awt.Font("Segoe UI", 1, 12));
         submitPaket.setText("Bawa Paket");
+
+        sendToGudangButton.setFont(new java.awt.Font("Segoe UI", 1, 12));
+        sendToGudangButton.setText("Sampai ke Gudang");
+        sendToGudangButton.setToolTipText("Serahkan Paket ke Gudang");
 
         paketSelesaiButton.setFont(new java.awt.Font("Segoe UI", 1, 12));
         paketSelesaiButton.setText("Paket Diterima");
@@ -140,6 +145,8 @@ public class KurirViews extends javax.swing.JFrame {
                                                         .addGroup(layout.createSequentialGroup()
                                                                 .addComponent(submitPaket)
                                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                .addComponent(sendToGudangButton)
+                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                                                 .addComponent(paketSelesaiButton)
                                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                                                 .addComponent(cekPaketButton)))
@@ -169,6 +176,7 @@ public class KurirViews extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                         .addComponent(submitPaket, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(sendToGudangButton, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addComponent(paketSelesaiButton, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addComponent(cekPaketButton, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGap(18, 18, 18)
@@ -225,9 +233,14 @@ public class KurirViews extends javax.swing.JFrame {
         return listPaketArea;
     }
 
+    public JButton getSendToGudangButton() {
+        return sendToGudangButton;
+    }
+
     // Variables declaration
     private javax.swing.JButton btnCamera;
     private javax.swing.JButton cekPaketButton;
+    private javax.swing.JButton sendToGudangButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
