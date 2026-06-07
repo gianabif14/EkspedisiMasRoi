@@ -2,21 +2,19 @@ package com.github.orions29.ekspedisi.model.entity;
 
 /**
  * Project: EkspedisiMasRoi
- * Package: com.github.orions29.ekspedisi.model
+ * Package: com.github.orions29.ekspedisi.model.entity
  * <p>
- * Deskripsi fungsional dari file ini.
+ * Template DTO untuk Paket.
  * </p>
  *
  * <hr>
- * <table border="0">
- * <tr><td><b>Author</b></td><td>: Orions29</td></tr>
- * <tr><td><b>Date</b></td><td>: 06 June 2026</td></tr>
- * <tr><td><b>Time</b></td><td>: 20:09</td></tr>
- * </table>
+ * <b>Author</b>: Orions29
+ * <b>Date</b>: 06 June 2026
+ * <b>Time</b>: 12:34
  * <hr>
  *
  * @author Orions29
  * @since 1.0
  */
-public record PaketDTO(String resi, String status, String senderName, String kotaTujuan) {
+public record PaketDTO(String resi, String status, String senderName, String destinationCity) {
 }

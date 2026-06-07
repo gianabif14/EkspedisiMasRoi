@@ -169,7 +169,7 @@ public class TrackingDAOMariaDb implements TrackingDAO {
             pstmt.setString(1, targetStatus);
             pstmt.setString(2, userId);
 
-            try (java.sql.ResultSet rs = pstmt.executeQuery()) {
+            try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
                     PaketDTO paket = new PaketDTO(
                             rs.getString("resi_id"),
@@ -187,5 +187,24 @@ public class TrackingDAOMariaDb implements TrackingDAO {
         return daftarPaket;
     }
 
+    @Override
+    public String getLatestPaketStatusByResi(String resiId) {
+        String querySql = "SELECT status FROM tracking_logs WHERE resi_id = ? ORDER BY timestamp DESC LIMIT 1";
 
+        try (Connection conn = DatabaseConfig.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(querySql)) {
+
+            pstmt.setString(1, resiId);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    return rs.getString("status");
+                }
+            }
+        } catch (java.sql.SQLException e) {
+            System.err.println("[QUERRY ERROR] Error: Gagal Menarik Status Paket");
+            logger.error("[QUERY ERROR] - Gagal menarik Status paket: {}", e.getMessage());
+        }
+        return null;
+    }
 }

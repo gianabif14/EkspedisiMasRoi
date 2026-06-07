@@ -53,12 +53,12 @@ public interface TrackingDAO {
 
     /**
      *
-     * <h3>Mengambil Paket yang Masih Dipegang oleh User ID, (Multiple Filter)</h3>
+     * <h3>Mengambil List Paket yang Masih Dipegang oleh User ID, (Multiple Filter)</h3>
      * <p> </p>
      *
-     * @param targetStatuses $END$ - Deskripsi fungsi parameter ini
-     * @param userId         $END$ - Deskripsi fungsi parameter ini
-     * @return {@link List<String>} - Penjelasan mengenai data yang dikembalikan
+     * @param targetStatuses $END$ - Status Target  yang ingin dicari
+     * @param userId         $END$ - paket yang masih dipegang oleh user siapa
+     * @return {@link List<String>} - Dikembalikan dalam bentuk List Paket DTO
      * @author Orions29
      * @since 6 Jun 2026
      *
@@ -67,10 +67,10 @@ public interface TrackingDAO {
 
     /**
      *
-     * <h3>Mengambil Paket yang Masih Dipegang oleh User ID, (Single Filter)</h3>
+     * <h3>Mengambil List Paket yang Masih Dipegang oleh User ID, (Single Filter)</h3>
      * <p> </p>
      *
-     * @param targetStatus - Target Status yang ingin dicari
+     * @param targetStatus - StatusTarget  yang ingin dicari
      * @param userId       - paket yang masih dipegang oleh user siapa
      * @return {@link List<PaketDTO>} - Dikembalikan dalam bentuk List Paket DTO
      * @author Orions29
@@ -78,4 +78,20 @@ public interface TrackingDAO {
      *
      */
     List<PaketDTO> getAllPaketByStatus(String targetStatus, String userId);
+
+
+    /**
+     *
+     * <h3>Mengambil Status Paket Terakhir</h3>
+     * <p> </p>
+     *
+     * @param resiId - Resi ID Paket yang mau dicek
+     * @return {@link String} - Status Paket Terakhir
+     * @author Orions29
+     * @since 7 Jun 2026
+     *
+     */
+    String getLatestPaketStatusByResi(String resiId);
+
+
 }

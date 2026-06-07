@@ -251,7 +251,7 @@ public class KurirController {
 
         int nomor = 1;
         for (PaketDTO paket : daftarResi) {
-            daftarPaketTxt.append(nomor).append(". ").append(paket.resi()).append(" - [").append(paket.kotaTujuan()).append("]\n");
+            daftarPaketTxt.append(nomor).append(". ").append(paket.resi()).append(" - [").append(paket.destinationCity()).append("]\n");
             nomor++;
         }
 
