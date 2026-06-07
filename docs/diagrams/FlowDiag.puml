@@ -1,71 +1,51 @@
 @startuml
-skinparam monochrome true
-skinparam shadowing false
-skinparam defaultFontName Arial
 
-|System Init|
+|Pelanggan|
 start
-:Jalankan ProjectInit.projectCheck();
-if (ENV & DB Terkoneksi?) then (Gagal)
-  :Log Fatal Error;
-  :System.exit(1);
-  stop
-else (Josjis ini / sakses)
+:Menyerahkan Barang;
+
+|Petugas Loket|
+:Menerima & Menimbang Barang;
+:Input Data (Tujuan, Penerima, Berat);
+:Sistem Generate Resi (Kapsul DTO);
+:Status Paket: **"Diterima Di Loket"**;
+
+|Kurir (Penjemput)|
+if (Loket Satu Atap dengan Gudang?) then (Tidak / Soliter)
+  :Scan Barcode Resi;
+  note right: **Whitelist Validasi:**\nHarus "Diterima Di Loket"
+  :Status Paket: **"Dibawa Kurir"**;
+  :Serah Terima ke Gudang;
+else (Ya)
 endif
 
-|Auth Layer|
-:Buka LoginView;
-repeat
-  :Input Username & Password;
-  :LoginController memanggil UserDAO;
-repeat while (Kredensial Valid?) is (Tidak valid)
--> Valid;
+|Staf Gudang|
+:Scan Barcode Kedatangan;
+:Status Paket: **"Tiba di Fasilitas Sortir"**;
+:Melakukan Proses Sortir (Routing);
+:Status Paket: **"Sedang Disortir"**;
+:Menyiapkan Kantong/Keranjang Pengiriman;
+:Status Paket: **"Transit Gudang"**;
 
-:Cek Role User;
-if (Role?) then (loket)
+|Kurir (Long Distance)|
+:Scan Barcode Ambil Muatan;
+note right: **Whitelist Validasi:**\nHarus "Transit Gudang"
+:Status Paket: **"Dibawa Kurir"**;
+:Perjalanan Distribusi Lintas Fasilitas;
 
-  |Loket|
-  :Buka InputPaketView;
-  :Input Data Paket & Alamat (Origin dan Destination);
-  :PaketDAO.insertPaket();
-  :TrackingDAO.insertLog() (Status: Diterima Loket);
-  :Cetak Resi Fisik;
-
-else if (gudang)
-
-  |Gudang|
-  :Buka GudangDashboardView;
-  :Scan Barcode Resi / Pilih Data;
-  :Pilih Status (Transit/Disortir);
-  :TrackingDAO.insertLog(userId Gudang);
-  :Perbarui Tampilan Manifest;
-
-else if (kurir)
-
-  |Kurir|
-  :Buka KurirAppView;
-  :Lihat Daftar Paket Bawaan;
-  :Update Status (Terkirim / Gagal Alamat);
-  :TrackingDAO.insertLog(userId Kurir);
-
-endif
-
-|System Init|
-stop
-
-' --- ALUR TERPISAH UNTUK CLIENT ---
-
-|Client (Pelanggan)|
-start
-:Buka TrackingResultView;
-note right: Tidak butuh Login!\nAkses Read-Only
-:Input Nomor Resi;
-if (Resi Ditemukan?) then (Ya)
-  :TrackingDAO.getHistoryByResi();
-  :Render Timeline Perjalanan Paket;
+if (Kendala Lapangan / Gagal Kirim?) then (Ya)
+  :Tekan Tombol Retur Gudang;
+  |Staf Gudang|
+  :Menerima Kembali Muatan;
+  :Status Paket: **"Transit Gudang"**;
+  detach
 else (Tidak)
-  :Tampilkan "Resi Tidak Valid";
+  |Kurir (Long Distance)|
+  :Serah Terima di Fasilitas Tujuan Akhir;
+  :Tekan Tombol Selesai;
+  note right: **State Machine Validasi:**\nHarus berstatus "Dibawa Kurir"
+  :Status Paket: **"Paket Telah Diterima"**;
+  stop
 endif
-stop
 
 @enduml

@@ -1,0 +1,60 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+skinparam actorStyle awesome
+
+
+actor "Admin (Superuser)" as admin
+actor "Petugas Loket" as loket
+actor "Staf Gudang" as gudang
+actor "Kurir Jarak Jauh" as kurir
+
+rectangle "Sistem Ekspedisi Mas Roi (EMR)" {
+
+  ' Use Case Global
+  usecase "Otentikasi Login" as UC_Login
+
+  ' Use Case Admin
+  usecase "Kelola Data Pekerja (CRUD)" as UC_Admin1
+
+  ' Use Case Loket
+  usecase "Input Paket Baru & Terbitkan Resi" as UC_Loket1
+  usecase "Pantau Muatan Loket (Radar)" as UC_Loket2
+
+  ' Use Case Gudang
+  usecase "Update Status Paket (Sortir/Transit)" as UC_Gudang1
+  usecase "Pantau Radar Gudang" as UC_Gudang2
+
+  ' Use Case Kurir
+  usecase "Ambil Paket dari Fasilitas (Scan)" as UC_Kurir1
+  usecase "Serahkan Muatan Kembali ke Gudang" as UC_Kurir2
+  usecase "Selesaikan Pengiriman" as UC_Kurir3
+  usecase "Pantau Isi Tas Kurir (Radar)" as UC_Kurir4
+}
+
+' Koneksi Aktor
+
+' Semua harus login
+admin --> UC_Login
+loket --> UC_Login
+gudang --> UC_Login
+kurir --> UC_Login
+
+' Hak Akses Admin
+admin --> UC_Admin1
+
+' Hak Akses Loket
+loket --> UC_Loket1
+loket --> UC_Loket2
+
+' Hak Akses Gudang
+gudang --> UC_Gudang1
+gudang --> UC_Gudang2
+
+' Hak Akses Kurir
+kurir --> UC_Kurir1
+kurir --> UC_Kurir2
+kurir --> UC_Kurir3
+kurir --> UC_Kurir4
+
+@enduml

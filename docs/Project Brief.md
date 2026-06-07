@@ -2,7 +2,7 @@
 
 **Project Besar PBO: Erlan, Roi, dan Gian**
 
-*Mata Kuliah Pemrograman Berbasis Objek Teori Dosen Pengampu: Bpk. Rudy*
+*Mata Kuliah Pemrograman Berbasis Objek Teori Dosen Pengampu: Bpk. Rudi Cahyadi S.Si., M.T*
 
 ---
 
