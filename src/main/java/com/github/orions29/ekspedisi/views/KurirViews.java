@@ -10,7 +10,7 @@ import javax.swing.*;
  * Project: EkspedisiMasRoi
  * Package: com.github.orions29.ekspedisi.views
  * <p>
- * Panel Kurir dengan Radar Daftar Paket.
+ * Panel Penugasan Kurir
  * </p>
  *
  * <hr>
@@ -65,7 +65,7 @@ public class KurirViews extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 14));
-        jLabel1.setText("Panel Operasional Kurir");
+        jLabel1.setText("Panel Operasional Kurir Long Distance");
 
         jLabel2.setText("Petugas Kurir : ");
         jLabel3.setText("Username");
@@ -87,14 +87,12 @@ public class KurirViews extends javax.swing.JFrame {
         btnCamera.setToolTipText("Scan Barcode via Kamera");
         btnCamera.setMargin(new java.awt.Insets(2, 2, 2, 2));
 
+
+        submitPaket.setFont(new java.awt.Font("Segoe UI", 1, 12));
         submitPaket.setText("Bawa Paket");
 
-        paketSelesaiButton.setBackground(new java.awt.Color(0, 153, 51));
         paketSelesaiButton.setFont(new java.awt.Font("Segoe UI", 1, 12));
-        paketSelesaiButton.setForeground(new java.awt.Color(255, 255, 255));
         paketSelesaiButton.setText("Paket Diterima");
-        paketSelesaiButton.setOpaque(true);
-        paketSelesaiButton.setBorderPainted(false);
 
         cekPaketButton.setBackground(new java.awt.Color(255, 153, 0));
         cekPaketButton.setFont(new java.awt.Font("Segoe UI", 1, 12));
@@ -104,7 +102,7 @@ public class KurirViews extends javax.swing.JFrame {
         cekPaketButton.setBorderPainted(false);
 
         jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 12));
-        jLabel5.setText("Daftar Paket di Motor/Mobil:");
+        jLabel5.setText("Daftar Paket di Mobil:");
 
         listPaketArea.setEditable(false);
         listPaketArea.setBackground(new java.awt.Color(240, 240, 240));

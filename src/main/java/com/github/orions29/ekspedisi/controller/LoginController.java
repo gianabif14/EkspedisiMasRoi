@@ -173,7 +173,7 @@ public class LoginController {
                         user
                 );
 
-                kurirViews.setTitle("EMR Tracking System - Kurir");
+                kurirViews.setTitle("EMR Tracking System - Operasional Kurir");
                 kurirViews.setLocationRelativeTo(null); // set layar ditengah
                 kurirViews.setVisible(true); // menampilkan halaman kurir
 

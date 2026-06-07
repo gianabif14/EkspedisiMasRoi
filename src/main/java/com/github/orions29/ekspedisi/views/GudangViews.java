@@ -115,8 +115,7 @@ public class GudangViews extends javax.swing.JFrame {
         comboStatus.setModel(new javax.swing.DefaultComboBoxModel<>(new String[]{
                 "Tiba di Fasilitas Sortir",
                 "Sedang Disortir",
-                "Transit Gudang",
-                "Diserahkan ke Kurir"
+                "Transit Gudang"
         }));
 
 

@@ -9,6 +9,7 @@ import com.github.orions29.ekspedisi.views.KurirViews;
 import com.github.orions29.ekspedisi.views.LoginView;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.*;
 
@@ -39,10 +40,13 @@ import javax.swing.*;
 public class KurirController {
 
     private KurirViews view;
-
     private User loggedInUser;
-
     private TrackingDAO trackingDAO;
+
+    private final Set<String> ALLOWED_PICKUP_STATUSES = Set.of(
+            "Transit Gudang",
+            "Diterima Di Loket"
+    );
 
     public KurirController(
             KurirViews view,
@@ -106,7 +110,7 @@ public class KurirController {
 
     private void handleCameraScan() {
         com.github.orions29.ekspedisi.views.CameraScannerDialog dialog =
-            new com.github.orions29.ekspedisi.views.CameraScannerDialog(view);
+                new com.github.orions29.ekspedisi.views.CameraScannerDialog(view);
         dialog.setVisible(true);
 
         String scannedResi = dialog.getScannedResult();
@@ -121,106 +125,97 @@ public class KurirController {
     // method ini akan membuat log baru buat disimpen di db
     private void handleDeliveryUpdate() {
 
-        String resi =
-                view.getTxtResi()
-                        .getText()
-                        .trim();
+        String resi = view.getTxtResi().getText().trim();
 
         if (resi.isEmpty()) {
-
-            JOptionPane.showMessageDialog(
-                    null,
-                    "Nomor resi wajib diisi"
-            );
-
+            JOptionPane.showMessageDialog(null, "Nomor resi wajib diisi ngab!");
             return;
         }
 
-        ShipmentLog logBaru =
-                new ShipmentLog(
-                        resi,
-                        loggedInUser.getLocation(),
-                        "Dibawa Kurir",
-                        loggedInUser.getId()
-                );
+//        Cek Status Terakhir
+        String currentStatus = trackingDAO.getLatestPaketStatusByResi(resi);
 
-        boolean success =
-                trackingDAO.insertLog(logBaru);
+        if (currentStatus == null) {
+            JOptionPane.showMessageDialog(null, "Resi fiktif! Data tidak ditemukan di MariaDB.", "Error 404", JOptionPane.ERROR_MESSAGE);
+            view.getTxtResi().selectAll();
+            return;
+        }
+
+//        Pengecekan SOP dengan Set SOP
+        if (!ALLOWED_PICKUP_STATUSES.contains(currentStatus)) {
+            JOptionPane.showMessageDialog(null,
+                    "SOP DILANGGAR! Paket ini masih berstatus: [" + currentStatus + "].\n" +
+                            "Kamu HANYA boleh mengambil muatan yang berstatus 'Transit Gudang' atau 'Diterima Di Loket'!",
+                    "Akses Kurir Ditolak", JOptionPane.ERROR_MESSAGE);
+
+            view.getTxtResi().selectAll();
+            view.getTxtResi().requestFocus();
+
+//            Pokoknya engggak
+            return;
+        }
+
+        ShipmentLog logBaru = new ShipmentLog(
+                resi,
+                loggedInUser.getLocation(),
+                "Dibawa Kurir",
+                loggedInUser.getId()
+        );
+
+//        Insertkan
+        boolean success = trackingDAO.insertLog(logBaru);
 
         if (success) {
+            JOptionPane.showMessageDialog(null, "Muatan diamankan! Paket masuk ke tas Kurir.\nResi : " + resi);
+            view.getTxtResi().setText("");
 
-            JOptionPane.showMessageDialog(
-                    null,
-                    "Status pengiriman berhasil diperbarui!\n\n"
-                            + "Resi : "
-                            + resi
-            );
-
-            view.getTxtResi()
-                    .setText("");
-
-        } else { // error handling gagal update tracking
-
-            JOptionPane.showMessageDialog(
-                    null,
-                    "Gagal update tracking paket!"
-            );
+            handleCekMuatan();
+        } else {
+            JOptionPane.showMessageDialog(null, "Fatal Error: Gagal update tracking paket ke MariaDB!");
         }
     }
 
 
     // method untuk mengubah status paket menjadi diterima oleh penerima
     // status yang dicatat: "diterima oleh penerima"
+    // method untuk mengubah status paket menjadi diterima oleh penerima
     private void handlePaketSelesai() {
 
-        // ngambil resi dari input field
-        String resi =
-                view.getTxtResi()
-                        .getText()
-                        .trim();
+        String resi = view.getTxtResi().getText().trim();
 
-        // validasi agar resi tidak kosong
         if (resi.isEmpty()) {
-
-            JOptionPane.showMessageDialog(
-                    null,
-                    "Nomor resi wajib diisi"
-            );
-
+            JOptionPane.showMessageDialog(null, "Nomor resi wajib diisi");
             return;
         }
 
-        // Buat tracking log baru
-        // dengan status paket diterima oleh penerima
-        ShipmentLog logBaru =
-                new ShipmentLog(
-                        resi,
-                        "Paket Telah Diterima",
-                        "Paket sudah diterima oleh penerima",
-                        loggedInUser.getId()
-                );
+        String currentStatus = trackingDAO.getLatestPaketStatusByResi(resi);
 
-        // menyimpan tracking pengiriman ke db
-        boolean success =
-                trackingDAO.insertLog(logBaru);
+        // Kurir HARAM hukumnya menyelesaikan paket kalau dia belum men-scan paket itu sebagai "Dibawa Kurir"
+        if (!"Dibawa Kurir".equals(currentStatus)) {
+            JOptionPane.showMessageDialog(null,
+                    "SOP DILANGGAR! Kamu tidak bisa menyelesaikan paket ini karena statusnya masih [" + currentStatus + "].\n" +
+                            "Paket harus berstatus 'Dibawa Kurir' terlebih dahulu!",
+                    "Akses Ditolak", JOptionPane.ERROR_MESSAGE);
+            view.getTxtResi().selectAll();
+            return;
+        }
 
-        // success handler
+        ShipmentLog logBaru = new ShipmentLog(
+                resi,
+                "Paket Telah Diterima",
+                "Paket sudah diterima oleh penerima Langsung di Kurir Jarak Jauh",
+                loggedInUser.getId()
+        );
+
+        boolean success = trackingDAO.insertLog(logBaru);
+
         if (success) {
+            JOptionPane.showMessageDialog(null, "Misi Selesai! Paket berhasil dikirimkan!");
+            view.getTxtResi().setText("");
 
-            JOptionPane.showMessageDialog(
-                    null,
-                    "Paket berhasil diselesaikan!"
-            );
-
-            view.getTxtResi()
-                    .setText("");
-
+            handleCekMuatan();
         } else {
-            // failed handlerw
-            JOptionPane.showMessageDialog(
-                    null,
-                    "Gagal update status paket!"
-            );
+            JOptionPane.showMessageDialog(null, "Fatal Error: Gagal update status paket ke MariaDB!");
         }
     }
 

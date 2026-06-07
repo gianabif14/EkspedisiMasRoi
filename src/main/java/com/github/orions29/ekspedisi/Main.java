@@ -32,7 +32,6 @@ public class Main {
 //        Jalanin Project Init Recheck
         ProjectInit.projectCheck();
 
-
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception ex) {
