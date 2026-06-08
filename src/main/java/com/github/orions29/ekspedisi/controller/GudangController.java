@@ -9,6 +9,8 @@ import com.github.orions29.ekspedisi.views.CameraScannerDialog;
 import com.github.orions29.ekspedisi.views.GudangViews;
 import com.github.orions29.ekspedisi.views.LoginView;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -43,10 +45,11 @@ public class GudangController {
 
 //    Pembobotan status paket
     private final Map<String, Integer> STATE_HIERARCHY = Map.of(
-            "Tiba di Fasilitas Sortir", 1,
-            "Sedang Disortir", 2,
-            "Transit Gudang", 3,
-            "Dibawa Kurir", 4
+            "Tiba di Fasilitas Gudang", 1,
+            "Diterima Gudang", 2,
+            "Sedang Disortir", 3,
+            "Transit Gudang", 4,
+            "Dibawa Kurir", 5
 //            "Diserahkan ke Kurir", 4
     );
 
@@ -128,7 +131,7 @@ public class GudangController {
         }
 
         // Siapkan stempel waktu di awal biar bisa dipakai di semua skenario
-        String timestamp = java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("HH:mm:ss"));
+        String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"));
 
         //        State Verivied
         String currentStatus = trackingDAO.getLatestPaketStatusByResi(resiId);
@@ -196,7 +199,7 @@ public class GudangController {
     public void handleCekPaket() {
 //        List status yang akan tertampil
         List<String> statusGudang = Arrays.asList(
-                "Tiba di Fasilitas Sortir",
+                "Diterima Gudang",
                 "Sedang Disortir",
                 "Transit Gudang"
         );

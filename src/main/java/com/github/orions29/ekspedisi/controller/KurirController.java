@@ -212,7 +212,7 @@ public class KurirController {
         ShipmentLog logBaru = new ShipmentLog(
                 resi,
                 loggedInUser.getLocation(),
-                "Transit Gudang",
+                "Tiba di Fasilitas Gudang",
                 loggedInUser.getId()
         );
 
@@ -282,7 +282,9 @@ public class KurirController {
      *
      */
     private void handleCekMuatan() {
-        List<PaketDTO> daftarResi = trackingDAO.getAllPaketByStatus("Dibawa Kurir", loggedInUser.getId());
+        final List<String> PAKET_STATUSES_OF_KURIR= List.of("Dibawa Kurir","Tiba di Fasilitas Gudang");
+//        List<PaketDTO> daftarResi = trackingDAO.getAllPaketByStatus("Dibawa Kurir", loggedInUser.getId());
+        List<PaketDTO> daftarResi = trackingDAO.getResiByMultipleLatestStatuses(PAKET_STATUSES_OF_KURIR, loggedInUser.getId());
 //        Map<String,String> daftarResi = trackingDAO.getResiByLatestStatusAndUser("Dibawa Kurir", loggedInUser.getId());
         view.getListPaketAreaButton().setText("");
 
@@ -295,11 +297,11 @@ public class KurirController {
         StringBuilder daftarPaketTxt = new StringBuilder();
         daftarPaketTxt.append("<= DAFTAR MUATAN =>\n");
         daftarPaketTxt.append("Total Paket: ").append(daftarResi.size()).append(" item\n");
-        daftarPaketTxt.append("Format RESI-Kode-Resi - [Kota Tujuan]\n\n");
+        daftarPaketTxt.append("Format RESI-Kode-Resi - [Status] - [Kota Tujuan]\n\n");
 
         int nomor = 1;
         for (PaketDTO paket : daftarResi) {
-            daftarPaketTxt.append(nomor).append(". ").append(paket.resi()).append(" - [").append(paket.destinationCity()).append("]\n");
+            daftarPaketTxt.append(nomor).append(". ").append(paket.resi()).append(" - [").append(paket.status()).append("] - [").append(paket.destinationCity()).append("]\n");
             nomor++;
         }
 

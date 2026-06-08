@@ -113,7 +113,7 @@ public class GudangViews extends javax.swing.JFrame {
         jLabel5.setText("Set Status Berikutnya:");
 
         comboStatus.setModel(new javax.swing.DefaultComboBoxModel<>(new String[]{
-                "Tiba di Fasilitas Sortir",
+                "Diterima Gudang",
                 "Sedang Disortir",
                 "Transit Gudang"
         }));
