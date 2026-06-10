@@ -4,19 +4,11 @@ plugins {
 }
 
 group = "com.github.orions29.ekspedisi"
-version = "1.0-SNAPSHOT"
+version = "2.0.0"
 
 repositories {
     mavenCentral()
 }
-
-// Biar Bisa Jalan di Semua Mesin
-java {
-    toolchain {
-        languageVersion.set(JavaLanguageVersion.of(25))
-    }
-}
-
 
 dependencies {
     testImplementation(platform("org.junit:junit-bom:6.0.0"))
@@ -40,23 +32,69 @@ dependencies {
 // QR Code Generator (ZXing)
     implementation("com.google.zxing:core:3.5.3")
     implementation("com.google.zxing:javase:3.5.3")
-    
+
 // Webcam Capture
     implementation("com.github.sarxos:webcam-capture:0.3.12")
     implementation("com.github.sarxos:webcam-capture-driver-openimaj:0.3.12")
 }
 
-tasks.withType<Jar> {
-    manifest {
-        attributes(
-            "Main-Class" to "com.github.orions29.ekspedisi.Main"
-        )
+
+//Mengatur Dist task agar file .env otomatis masuk ke folder distribusi bawaan
+distributions {
+    main {
+        contents {
+            from(layout.projectDirectory) {
+                include(".env", "/assets/**/*")
+                // Memasukkannya ke dalam folder bin agar sejajar dengan script .bat
+                into("bin")
+            }
+        }
+    }
+}
+
+// Task Buat Build Java Version 26
+tasks.register("buildJava17") {
+    group = "distribution"
+    description = "Distribute Build Java 17"
+
+//    Pakai DistZip
+    finalizedBy("distZip")
+
+// Ubah Option sesuai versi
+    doFirst {
+        println("Build Untuk versi Java 17")
+        val compileJava = tasks.named<JavaCompile>("compileJava").get()
+        compileJava.options.release.set(17)
     }
 
-    from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
-
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+//    Sebelum di distZip
+    doLast {
+        tasks.named<Zip>("distZip") {
+            archiveFileName.set("${application.applicationName}-Java17.zip")
+        }
+    }
 }
+
+// Task Buat Build Java Version 26
+tasks.register("buildJava26") {
+    group = "distribution"
+    description = "Distribute Build Java 26"
+    finalizedBy("distZip")
+
+    doFirst {
+        println("Build Untuk versi Java 26")
+        val compileJava = tasks.named<JavaCompile>("compileJava").get()
+        compileJava.options.release.set(26)
+    }
+
+    doLast {
+        tasks.named<Zip>("distZip") {
+            archiveFileName.set("${application.applicationName}-Java26.zip")
+        }
+    }
+
+}
+
 
 application {
     mainClass.set("com.github.orions29.ekspedisi.Main")

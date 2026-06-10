@@ -85,7 +85,7 @@ public class PricingUtil {
      *
      */
     public static String formatRupiah(double nominal) {
-        Locale localeID = Locale.of("id", "ID");
+        Locale localeID = new Locale("id", "ID");
         NumberFormat formatter = NumberFormat.getNumberInstance(localeID);
 
         return formatter.format(nominal);
