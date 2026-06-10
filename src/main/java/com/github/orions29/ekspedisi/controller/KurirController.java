@@ -75,12 +75,6 @@ public class KurirController {
             handleTakeToGudang();
         });
 
-        view.getPaketSelesaiButton()
-                .addActionListener(e -> {
-
-                    handlePaketSelesai();
-                });
-
         view.getCekPaketButton().addActionListener(e -> {
             handleCekMuatan();
         });
