@@ -10,6 +10,14 @@ repositories {
     mavenCentral()
 }
 
+// Version Untuk di Build
+java{
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(17))
+    }
+}
+
+
 dependencies {
     testImplementation(platform("org.junit:junit-bom:6.0.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
@@ -44,56 +52,15 @@ distributions {
     main {
         contents {
             from(layout.projectDirectory) {
-                include(".env", "/assets/**/*")
+                include(".env", "assets/**", "native/**")
                 // Memasukkannya ke dalam folder bin agar sejajar dengan script .bat
                 into("bin")
+
             }
         }
     }
 }
 
-// Task Buat Build Java Version 26
-tasks.register("buildJava17") {
-    group = "distribution"
-    description = "Distribute Build Java 17"
-
-//    Pakai DistZip
-    finalizedBy("distZip")
-
-// Ubah Option sesuai versi
-    doFirst {
-        println("Build Untuk versi Java 17")
-        val compileJava = tasks.named<JavaCompile>("compileJava").get()
-        compileJava.options.release.set(17)
-    }
-
-//    Sebelum di distZip
-    doLast {
-        tasks.named<Zip>("distZip") {
-            archiveFileName.set("${application.applicationName}-Java17.zip")
-        }
-    }
-}
-
-// Task Buat Build Java Version 26
-tasks.register("buildJava26") {
-    group = "distribution"
-    description = "Distribute Build Java 26"
-    finalizedBy("distZip")
-
-    doFirst {
-        println("Build Untuk versi Java 26")
-        val compileJava = tasks.named<JavaCompile>("compileJava").get()
-        compileJava.options.release.set(26)
-    }
-
-    doLast {
-        tasks.named<Zip>("distZip") {
-            archiveFileName.set("${application.applicationName}-Java26.zip")
-        }
-    }
-
-}
 
 
 application {

@@ -1,11 +1,103 @@
 @startuml
-'https://plantuml.com/class-diagram
+left to right direction
 
-package "main" <<folder>> {
-    class "main"{
-        - belum ada
+' --- BAGIAN UTILITAS & KONFIGURASI ---
+package "Util & Config" {
+    class DatabaseConfig <<Singleton>> {
+        - static Connection conn
+        - DatabaseConfig()
+        + static synchronized getConnection() : Connection
+    }
+    class PricingUtil {
+        + static hitungChargeBerat(actualWeight: double, volumeCm3: double) : double
     }
 }
+
+' --- BAGIAN MODEL: ENTITAS (POJO) ---
+package "Model : Entity" {
+    class User {
+        - id : int
+        - username : String
+        - role : String
+    }
+    class Paket {
+        - resiId : String
+        - berat : double
+        - status : String
+    }
+    class ShipmentLog {
+        - logId : int
+        - resiId : String
+        - status : String
+    }
+}
+
+' --- BAGIAN MODEL: DATA ACCESS OBJECT (DAO) ---
+package "Model : DAO" {
+    interface UserDAO {
+        + authenticate()
+    }
+    class UserDAOMariaDb
+
+    interface PaketDAO {
+        + insertPaket()
+    }
+    class PaketDAOMariaDb
+
+    interface TrackingDAO {
+        + insertLog()
+    }
+    class TrackingDAOMariaDb
+
+    ' Relasi Realization (Implements)
+    UserDAO <|.. UserDAOMariaDb
+    PaketDAO <|.. PaketDAOMariaDb
+    TrackingDAO <|.. TrackingDAOMariaDb
+
+    ' Relasi Dependency ke Entity
+    UserDAOMariaDb ..> User : <<use>>
+    PaketDAOMariaDb ..> Paket : <<use>>
+    TrackingDAOMariaDb ..> ShipmentLog : <<use>>
+}
+
+' --- BAGIAN VIEW (ANTARMUKA SWING) ---
+package "View (Swing UI)" {
+    class AdminViews
+    class LoketViews
+    class GudangViews
+    class KurirViews
+}
+
+' --- BAGIAN CONTROLLER (LOGIKA BISNIS) ---
+package "Controller" {
+    class LoketController
+    class GudangController
+    class KurirController
+    class AdminController
+}
+
+' ==========================================
+' RELASI ANTAR PACKAGE & KELAS UTAMA
+' ==========================================
+
+' 1. Controller ke View (Association: Controller "punya" View)
+AdminController --> AdminViews : " view"
+LoketController --> LoketViews : " view"
+GudangController --> GudangViews : " view"
+KurirController --> KurirViews : " view"
+
+' 2. Controller ke DAO (Association: Tergantung pada Kontrak Interface)
+AdminController --> UserDAO : " userDao"
+LoketController --> PaketDAO : " paketDao"
+LoketController --> TrackingDAO : " trackingDao"
+GudangController --> TrackingDAO : " trackingDao"
+KurirController --> TrackingDAO : " trackingDao"
+
+' 3. Ketergantungan ke Utilitas (Dependency)
+LoketController ..> PricingUtil : "<<use>>"
+UserDAOMariaDb ..> DatabaseConfig : "<<use>>"
+PaketDAOMariaDb ..> DatabaseConfig : "<<use>>"
+TrackingDAOMariaDb ..> DatabaseConfig : "<<use>>"
 
 'Legenda
 legend bottom center

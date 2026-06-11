@@ -7,6 +7,8 @@ import com.github.orions29.ekspedisi.views.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+
 import javax.swing.*;
 
 
@@ -27,9 +29,13 @@ import javax.swing.*;
  * @since 1.0
  */
 public class Main {
-    static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         Logger logger = LoggerFactory.getLogger(Main.class);
+
 //        Jalanin Project Init Recheck
+//        Jalankan Cloudflared
+        ProjectInit.nativeLoader();
+//        Jalankan Project Check
         ProjectInit.projectCheck();
 
         try {
