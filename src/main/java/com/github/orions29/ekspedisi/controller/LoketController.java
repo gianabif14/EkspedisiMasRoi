@@ -8,8 +8,9 @@ import com.github.orions29.ekspedisi.model.entity.Paket;
 import com.github.orions29.ekspedisi.model.entity.PaketDTO;
 import com.github.orions29.ekspedisi.model.entity.ShipmentLog;
 import com.github.orions29.ekspedisi.model.entity.User;
-import com.github.orions29.ekspedisi.utils.GeneratorId;
-import com.github.orions29.ekspedisi.utils.PricingUtil;
+import com.github.orions29.ekspedisi.utils.business.GeneratorId;
+import com.github.orions29.ekspedisi.utils.business.PricingUtil;
+import com.github.orions29.ekspedisi.utils.business.QrGeneratorUtil;
 import com.github.orions29.ekspedisi.views.LoketViews;
 
 import java.util.List;
@@ -222,7 +223,7 @@ public class LoketController {
             trackingDAO.insertLog(log);
 
             // Generate QR Code dari resi
-            com.github.orions29.ekspedisi.utils.QrGeneratorUtil.generateQrCode(resiId);
+            QrGeneratorUtil.generateQrCode(resiId);
 
             String pesanSukses = String.format("Data Paket berhasil disimpan ke database MariaDB!\n\n"
                             + "Nomor Resi: %s\n"

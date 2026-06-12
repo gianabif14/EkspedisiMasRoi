@@ -1,4 +1,4 @@
-package com.github.orions29.ekspedisi.utils;
+package com.github.orions29.ekspedisi.utils.business;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;

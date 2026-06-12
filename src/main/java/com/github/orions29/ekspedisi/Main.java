@@ -29,14 +29,12 @@ import javax.swing.*;
  * @since 1.0
  */
 public class Main {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         Logger logger = LoggerFactory.getLogger(Main.class);
 
 //        Jalanin Project Init Recheck
-//        Jalankan Cloudflared
-        ProjectInit.nativeLoader();
 //        Jalankan Project Check
-        ProjectInit.projectCheck();
+        ProjectInit.main(args);
 
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -46,7 +44,7 @@ public class Main {
         }
 
 
-// Pake Invokelater untuk membuat GUI di thread yang berbeda
+        // Pake Invokelater untuk membuat GUI di thread yang berbeda
         SwingUtilities.invokeLater(() -> {
             javax.swing.JFrame frame = new javax.swing.JFrame("EMR Tracking System - Login");
             LoginView loginView = new LoginView();

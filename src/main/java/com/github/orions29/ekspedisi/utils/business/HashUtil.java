@@ -1,4 +1,4 @@
-package com.github.orions29.ekspedisi.utils;
+package com.github.orions29.ekspedisi.utils.business;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

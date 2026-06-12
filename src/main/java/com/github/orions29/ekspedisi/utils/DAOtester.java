@@ -2,6 +2,7 @@ package com.github.orions29.ekspedisi.utils;
 
 import com.github.orions29.ekspedisi.model.dao.*;
 import com.github.orions29.ekspedisi.model.entity.*;
+import com.github.orions29.ekspedisi.utils.business.GeneratorId;
 
 import java.util.List;
 

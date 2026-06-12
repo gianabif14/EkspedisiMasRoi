@@ -3,8 +3,8 @@ package com.github.orions29.ekspedisi.controller;
 import com.github.orions29.ekspedisi.model.dao.UserDAO;
 import com.github.orions29.ekspedisi.model.dao.UserDAOMariaDb;
 import com.github.orions29.ekspedisi.model.entity.User;
-import com.github.orions29.ekspedisi.utils.GeneratorId;
-import com.github.orions29.ekspedisi.utils.HashUtil;
+import com.github.orions29.ekspedisi.utils.business.GeneratorId;
+import com.github.orions29.ekspedisi.utils.business.HashUtil;
 import com.github.orions29.ekspedisi.views.AdminViews;
 import com.github.orions29.ekspedisi.views.LoginView;
 

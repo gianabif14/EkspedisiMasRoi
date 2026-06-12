@@ -3,8 +3,6 @@ package com.github.orions29.ekspedisi.views;
 import com.github.orions29.ekspedisi.model.dao.UserDAO;
 import com.github.orions29.ekspedisi.model.dao.UserDAOMariaDb;
 import com.github.orions29.ekspedisi.model.entity.User;
-import com.github.orions29.ekspedisi.utils.GeneratorId;
-import com.github.orions29.ekspedisi.utils.HashUtil;
 
 import javax.swing.*;
 

@@ -1,5 +1,7 @@
 package com.github.orions29.ekspedisi.utils;
 
+import static com.github.orions29.ekspedisi.utils.net.networkUtil.waitForPort;
+
 import com.github.orions29.ekspedisi.model.DatabaseConfig;
 
 import org.slf4j.Logger;
@@ -10,7 +12,6 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.sql.Connection;
-import java.sql.SQLException;
 
 /**
  * Project: EkspedisiMasRoi
@@ -35,77 +36,16 @@ public class ProjectInit {
 
     /**
      *
-     * <h3>Apakah Port Bisa</h3>
-     * <p> </p>
-     *
-     * @param host - Alamat Host yang mau dicek
-     * @param port - Port yang mau dicek
-     * @return {@link boolean} - Penjelasan mengenai data yang dikembalikan
-     * @author Orions29
-     * @since 11 Jun 2026
-     *
-     */
-    private static boolean isPortOcupied(String host, int port) {
-        try (Socket socket = new Socket()) {
-            socket.connect(new InetSocketAddress(host, port), 1000);
-            return true;
-        } catch (IOException e) {
-            return false;
-        }
-    }
-
-    /**
-     *
-     * <h3>Pengecekan Port</h3>
-     * <p> Pengecekan Port yang dibutuhkan</p>
-     *
-     * @param host          - Alamat Host yang mau dicek
-     * @param port          - Port yang mau dicek
-     * @param timeoutMillis - Waktu tunggu maksimal
-     * @return {@link boolean} - True kalau dia sudah oke false kalau dia masih bad bad boy
-     * @author Orions29
-     * @since 11 Jun 2026
-     *
-     */
-    private static boolean waitForPort(String host, int port, int timeoutMillis) {
-//        Pengecekan Port
-        if (isPortOcupied(host, port)) {
-//            Jika Port Ternyata sudah occupied
-            logger.error("[ERROR PORT] - Port {} Sedang ada yang pakai", port);
-        } else {
-            long waktuMulaiPort = System.currentTimeMillis();
-
-            while (System.currentTimeMillis() - waktuMulaiPort < timeoutMillis) {
-                try (Socket socket = new Socket()) {
-                    // Coba koneksi dengan timeout 1 detik per percobaan
-                    socket.connect(new InetSocketAddress(host, port), 1000);
-                    return true; // Jika tidak error, berarti port sudah terbuka dan tunnel jalan
-                } catch (IOException e) {
-                    // Port belum terbuka, tunggu 1 detik sebelum mencoba lagi
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException ie) {
-                        Thread.currentThread().interrupt();
-                        return false;
-                    }
-                }
-            }
-        }
-        // Kalau Timeout tercapai
-        return false;
-    }
-
-    /**
-     *
      * <h3>Native Loader</h3>
      * <p> Menginputkan Apapun itu yang diperlukan untuk aplikasi ini</p>
      *
+     * @return
      * @throws IOException jika kondisi IOException terjadi
      * @author Orions29
      * @since 10 Jun 2026
      *
      */
-    public static void nativeLoader() throws IOException {
+    private static boolean nativeLoader() throws IOException {
 //        Ngambil nama Sistem Operasi Pengguna
         String os = System.getProperty("os.name").toLowerCase();
 
@@ -121,10 +61,9 @@ public class ProjectInit {
                     "--url", "localhost:3306"
             );
 
-            pb.inheritIO();
-
             Process prc = pb.start();
 
+//            Graceful Shutdown by Event
             Runtime.getRuntime().addShutdownHook(new Thread(() -> {
                 try {
 //                    Kalau Process itu tidak null dan
@@ -138,15 +77,14 @@ public class ProjectInit {
             }));
 
             System.out.println("Menunggu Tunnel Cloudflare Siap...");
-//            Cek tiap 1 detik
-            boolean isPortOpen = waitForPort("localhost", 3306, 10000);
 
-            if (isPortOpen) {
-                System.out.println("Tunnel Cloudflare Siap!!");
+//          Cek tiap 1 detik dan cek port
+            if (waitForPort("localhost", 3306, 10000)) {
                 logger.info("Tunnel Cloudflare Ready");
+                return true;
             } else {
                 logger.error("[ERROR TUNNEL] - Tunnel Cloudflare Gagal");
-                System.exit(1);
+                return false;
             }
 
         } else if (os.contains("nix") || os.contains("nux") || os.contains("aix")) {
@@ -157,6 +95,9 @@ public class ProjectInit {
             System.out.println("MAAF UNTUK Mac OS BELUM DIDUKUNG");
             System.out.println("Mac");
         }
+
+//        Harusnya tidak terjadi terjadi jika osnya gajelas
+        return false;
     }
 
     /**
@@ -168,7 +109,7 @@ public class ProjectInit {
      * @since 29 May 2026
      *
      */
-    public static void projectCheck() {
+    private static void projectCheck() {
         logger.info("Project Check Init Start");
         System.out.println(">> ProjectInit CheckList: ");
 
@@ -191,8 +132,8 @@ public class ProjectInit {
 
 //        Kalau ada yang gagal gaboleh Jalan Titik.
         if (!isEnvLoaded || !isDbConnected) {
-            System.err.println("[FATAL ERROR] - Project init Checklist Failed. Program Stop.");
-            logger.error("[FATAL ERROR] - Project init Checklist Failed");
+            System.err.println("[FATAL ERROR] - Project Checklist Failed. Program Stop.");
+            logger.error("[FATAL ERROR] - Project Checklist Failed");
             System.exit(1);
         }
     }
@@ -208,5 +149,21 @@ public class ProjectInit {
      */
     public static void DAOTest() {
         DAOtester.main();
+    }
+
+    public static void main(String[] args) {
+        try {
+//            Load Native Loader
+            if (nativeLoader()) {
+                projectCheck();
+            } else {
+//                Jika gagal menjalankan nativeLoader Keluar
+                logger.error("[ERROR PROJECT INIT] - Native Loader Failed");
+                System.exit(1);
+            }
+        } catch (IOException e) {
+            logger.error("[ERROR PROJECT INIT] - Native Loader Failed: {}", e.getMessage());
+        }
+
     }
 }

@@ -1,4 +1,4 @@
-package com.github.orions29.ekspedisi.utils;
+package com.github.orions29.ekspedisi.utils.business;
 
 import java.text.NumberFormat;
 import java.util.Locale;
