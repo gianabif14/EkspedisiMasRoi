@@ -11,7 +11,7 @@ import java.net.Socket;
  * Project: EkspedisiMasRoi
  * Package: com.github.orions29.ekspedisi.utils.net
  * <p>
- * Utility Class untuk Networking
+ * Utility Class untuk Semua Kebutuhan Networking
  * </p>
  *
  * <hr>
@@ -28,8 +28,10 @@ public class networkUtil {
 
     /**
      *
-     * <h3>Apakah Port Bisa</h3>
-     * <p> </p>
+     * <h3>Port Cek</h3>
+     * <p>
+     * Mengecek Port tertentu apakah port ini ada yang menggunakan
+     * </p>
      *
      * @param host - Alamat Host yang mau dicek
      * @param port - Port yang mau dicek
@@ -41,7 +43,7 @@ public class networkUtil {
     public static boolean isPortOcupied(String host, int port) {
         try (Socket socket = new Socket()) {
 //            Nunggu 1 detik untuk mencoba koneksi
-            socket.connect(new InetSocketAddress(host, port), 1000);
+            socket.connect(new InetSocketAddress(host, port), 1500);
             return true;
         } catch (Exception e) {
             return false;
@@ -51,8 +53,10 @@ public class networkUtil {
 
     /**
      *
-     * <h3>Pengecekan Port</h3>
-     * <p> Pengecekan Port yang dibutuhkan</p>
+     * <h3>Trying To Reach Port</h3>
+     * <p>
+     * Waiting Function untuk menunggu port sampai tersambung
+     * </p>
      *
      * @param host          - Alamat Host yang mau dicek
      * @param port          - Port yang mau dicek

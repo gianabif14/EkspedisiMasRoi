@@ -32,10 +32,6 @@ public class Main {
     public static void main(String[] args) {
         Logger logger = LoggerFactory.getLogger(Main.class);
 
-//        Jalanin Project Init Recheck
-//        Jalankan Project Check
-        ProjectInit.main(args);
-
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception ex) {
@@ -43,6 +39,9 @@ public class Main {
             System.err.println("[VIEWS ERROR] - Gagal estetik cahhhhhhhhhhhhhhhhhh lookAndFeel");
         }
 
+//        Jalanin Project Init Recheck
+//        Jalankan Project Check
+        ProjectInit.main(args);
 
         // Pake Invokelater untuk membuat GUI di thread yang berbeda
         SwingUtilities.invokeLater(() -> {

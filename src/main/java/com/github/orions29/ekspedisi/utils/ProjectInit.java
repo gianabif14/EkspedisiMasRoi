@@ -13,6 +13,9 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.sql.Connection;
 
+import javax.swing.*;
+import javax.swing.text.View;
+
 /**
  * Project: EkspedisiMasRoi
  * Package: com.github.orions29.ekspedisi.utils
@@ -37,7 +40,9 @@ public class ProjectInit {
     /**
      *
      * <h3>Native Loader</h3>
-     * <p> Menginputkan Apapun itu yang diperlukan untuk aplikasi ini</p>
+     * <p>
+     * Menginputkan Semua yang diperlukan untuk aplikasi ini
+     * </p>
      *
      * @return
      * @throws IOException jika kondisi IOException terjadi
@@ -76,7 +81,7 @@ public class ProjectInit {
                 }
             }));
 
-            System.out.println("Menunggu Tunnel Cloudflare Siap...");
+            System.out.println("Menunggu Tunnel Database Siap...");
 
 //          Cek tiap 1 detik dan cek port
             if (waitForPort("localhost", 3306, 10000)) {
@@ -96,7 +101,7 @@ public class ProjectInit {
             System.out.println("Mac");
         }
 
-//        Harusnya tidak terjadi terjadi jika osnya gajelas
+//        Harusnya tidak terjadi terjadi jika osnya jelas
         return false;
     }
 
@@ -112,7 +117,6 @@ public class ProjectInit {
     private static void projectCheck() {
         logger.info("Project Check Init Start");
         System.out.println(">> ProjectInit CheckList: ");
-
 
 //        Checklist ENV
         boolean isEnvLoaded = SecretLoader.isLoad();
@@ -134,6 +138,7 @@ public class ProjectInit {
         if (!isEnvLoaded || !isDbConnected) {
             System.err.println("[FATAL ERROR] - Project Checklist Failed. Program Stop.");
             logger.error("[FATAL ERROR] - Project Checklist Failed");
+            JOptionPane.showMessageDialog(null, "Project Checklist Failed. Program Stop.");
             System.exit(1);
         }
     }
@@ -159,6 +164,7 @@ public class ProjectInit {
             } else {
 //                Jika gagal menjalankan nativeLoader Keluar
                 logger.error("[ERROR PROJECT INIT] - Native Loader Failed");
+                JOptionPane.showMessageDialog(null, "Project Initation Failed. Program Stop (Check For Log) \n Calls For Admin!!", "Error Fatal", JOptionPane.ERROR_MESSAGE);
                 System.exit(1);
             }
         } catch (IOException e) {
